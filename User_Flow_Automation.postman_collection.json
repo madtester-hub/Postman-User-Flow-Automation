@@ -1,0 +1,278 @@
+{
+  "info": {
+    "_postman_id": "9378f295-1f59-4900-b229-e04c80c6ae2c",
+    "name": "User Flow Automation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "46915675",
+    "_collection_link": "https://go.postman.co/collection/46915675-9378f295-1f59-4900-b229-e04c80c6ae2c?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Login (extract token)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Parse the JSON response",
+              "const jsonData = pm.response.json();",
+              "",
+              "// Extract the token and store it in the environment variable",
+              "pm.environment.set(\"token\", jsonData.token);",
+              "",
+              "//display to console",
+              "console.log('token value is; ', pm.environment.get(\"token\"));",
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// Get the current timestamp",
+              "const now = new Date();",
+              "",
+              "// Helper function to add leading zeros",
+              "const padZero = (num) => num.toString().padStart(2, '0');",
+              "",
+              "// Extract date components",
+              "const month = padZero(now.getMonth() + 1); // Months are 0-indexed",
+              "const day = padZero(now.getDate());",
+              "const year = now.getFullYear();",
+              "const hours = padZero(now.getHours());",
+              "const minutes = padZero(now.getMinutes());",
+              "const seconds = padZero(now.getSeconds());",
+              "",
+              "// Format as mm-DD-yyyy HH:mm:ss",
+              "const formattedTimestamp = `${month}-${day}-${year} ${hours}:${minutes}:${seconds}`;",
+              "",
+              "// Store in environment variable",
+              "pm.environment.set(\"time now\", formattedTimestamp);",
+              "",
+              "console.log(\"Formatted timestamp:\", formattedTimestamp);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "reqres_b24f2b35a9164e739f4b0d138cebb6b7",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"eve.holt@reqres.in\",\r\n    \"password\": \"cityslicka\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "// Parse the JSON response",
+              "const jsonData = pm.response.json();",
+              "",
+              "// Extract the id and store it in the environment variable",
+              "pm.environment.set(\"userId\", jsonData.id);",
+              "",
+              "// Display to console",
+              "console.log('userId value is: ', pm.environment.get(\"userId\"));"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJRbFpKdmFYdEl3SVVTUTZyMFJKbEhaN0YzOEVBbFF4WS1LeGo5Y1FJemlFIn0.eyJleHAiOjE3NTkzOTQxNzcsImlhdCI6MTc1OTM5Mjk3NywiYXV0aF90aW1lIjoxNzU5Mzg0ODg2LCJqdGkiOiJiNWU2NzBkMi1kNDFlLTRmYzctYmJkMC1jNDE3MDY3YmM3YWEiLCJpc3MiOiJodHRwczovL2F1dGgxLmRldi5vdGctaW50ZXJuYWwuY29tL3JlYWxtcy9kZXZwYXlyb2xsY3VzdG9tZXJ0d28iLCJhdWQiOlsiYTc3ZmMwMzYtM2Y4MC00ZWEwLWJiMGYtYzM2NWU0MzU3ODE2LWIyMzI3MjNjLWQ4MjEtNDRkNS05MmM2LTgyNDExOTZhZGU2Ny0xNmEwNWY2Mi04MmZkLTQ3ZGItODdkYS1jOTAxZjU4M2QzZWEtNjM4ODA5MzQyODc2MTQyMzA5IiwiYWNjb3VudCJdLCJzdWIiOiJhZjI3NTk2Ni02NWU4LTRhYTgtODMwZi0xYjI1MGIzYmQ5MWUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJBZ25vc3RpY1BheXJvbGwiLCJzaWQiOiI3OGIwNDRmMy1jMDdlLTQ4OWEtYWEyMi0wZmI3Y2RlM2MzZDciLCJhY3IiOiIwIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtZGV2cGF5cm9sbGN1c3RvbWVydHdvIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwib3RnX3RlbmFudF9pZCI6IjZkMjhiNWMwLTNjYWQtNDllMS05MGE1LTVkNmQ4Y2E5M2UwMyIsIm5hbWUiOiJUZXN0IFVzZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0dXNlcm9uZSIsImdpdmVuX25hbWUiOiJUZXN0IiwiZmFtaWx5X25hbWUiOiJVc2VyIn0.Df-YxLiM7V827a8RmgXWYchmsWSCzyTmEsmjRsbW20xAtVIZcKiJYtZ1XsBIHBbTN6Q2b64KrayFT0crg3_RSFcC2OnS5bFVnQ5m_59o6MZrME8vymqVG1b9Qs2_TpumvgfrWqw5tFTP2oDR43YBKWDfzAL3Jk1ScM14hdqWBS_iqTYiXkPwIEYBRM6HjwictrhDwNJ0OPtPmWxVJ0g5KnAqTI1aNXx3qpmwmI5gWS4TlPXvdZhL22l-XQJ8wXHBcOWTPBzsyn490p4vQMDowORD0G1wGUcI2qtT4pIjmRzzgPJlOyWfB9w3tpw4IxAcG4q-XpLdnEIPYIvjKSkz5A",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "reqres_b24f2b35a9164e739f4b0d138cebb6b7",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"John Doe\",\r\n    \"job\": \"QA Engineer\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/users",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJRbFpKdmFYdEl3SVVTUTZyMFJKbEhaN0YzOEVBbFF4WS1LeGo5Y1FJemlFIn0.eyJleHAiOjE3NTkzOTQxNzcsImlhdCI6MTc1OTM5Mjk3NywiYXV0aF90aW1lIjoxNzU5Mzg0ODg2LCJqdGkiOiJiNWU2NzBkMi1kNDFlLTRmYzctYmJkMC1jNDE3MDY3YmM3YWEiLCJpc3MiOiJodHRwczovL2F1dGgxLmRldi5vdGctaW50ZXJuYWwuY29tL3JlYWxtcy9kZXZwYXlyb2xsY3VzdG9tZXJ0d28iLCJhdWQiOlsiYTc3ZmMwMzYtM2Y4MC00ZWEwLWJiMGYtYzM2NWU0MzU3ODE2LWIyMzI3MjNjLWQ4MjEtNDRkNS05MmM2LTgyNDExOTZhZGU2Ny0xNmEwNWY2Mi04MmZkLTQ3ZGItODdkYS1jOTAxZjU4M2QzZWEtNjM4ODA5MzQyODc2MTQyMzA5IiwiYWNjb3VudCJdLCJzdWIiOiJhZjI3NTk2Ni02NWU4LTRhYTgtODMwZi0xYjI1MGIzYmQ5MWUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJBZ25vc3RpY1BheXJvbGwiLCJzaWQiOiI3OGIwNDRmMy1jMDdlLTQ4OWEtYWEyMi0wZmI3Y2RlM2MzZDciLCJhY3IiOiIwIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtZGV2cGF5cm9sbGN1c3RvbWVydHdvIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwib3RnX3RlbmFudF9pZCI6IjZkMjhiNWMwLTNjYWQtNDllMS05MGE1LTVkNmQ4Y2E5M2UwMyIsIm5hbWUiOiJUZXN0IFVzZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0dXNlcm9uZSIsImdpdmVuX25hbWUiOiJUZXN0IiwiZmFtaWx5X25hbWUiOiJVc2VyIn0.Df-YxLiM7V827a8RmgXWYchmsWSCzyTmEsmjRsbW20xAtVIZcKiJYtZ1XsBIHBbTN6Q2b64KrayFT0crg3_RSFcC2OnS5bFVnQ5m_59o6MZrME8vymqVG1b9Qs2_TpumvgfrWqw5tFTP2oDR43YBKWDfzAL3Jk1ScM14hdqWBS_iqTYiXkPwIEYBRM6HjwictrhDwNJ0OPtPmWxVJ0g5KnAqTI1aNXx3qpmwmI5gWS4TlPXvdZhL22l-XQJ8wXHBcOWTPBzsyn490p4vQMDowORD0G1wGUcI2qtT4pIjmRzzgPJlOyWfB9w3tpw4IxAcG4q-XpLdnEIPYIvjKSkz5A",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "reqres_b24f2b35a9164e739f4b0d138cebb6b7",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"John Doe 2\",\r\n    \"job\": \"QA Engineer 2\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/users/{{userId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "{{userId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {\r",
+              "    pm.response.to.have.status(204);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJRbFpKdmFYdEl3SVVTUTZyMFJKbEhaN0YzOEVBbFF4WS1LeGo5Y1FJemlFIn0.eyJleHAiOjE3NTkzOTQxNzcsImlhdCI6MTc1OTM5Mjk3NywiYXV0aF90aW1lIjoxNzU5Mzg0ODg2LCJqdGkiOiJiNWU2NzBkMi1kNDFlLTRmYzctYmJkMC1jNDE3MDY3YmM3YWEiLCJpc3MiOiJodHRwczovL2F1dGgxLmRldi5vdGctaW50ZXJuYWwuY29tL3JlYWxtcy9kZXZwYXlyb2xsY3VzdG9tZXJ0d28iLCJhdWQiOlsiYTc3ZmMwMzYtM2Y4MC00ZWEwLWJiMGYtYzM2NWU0MzU3ODE2LWIyMzI3MjNjLWQ4MjEtNDRkNS05MmM2LTgyNDExOTZhZGU2Ny0xNmEwNWY2Mi04MmZkLTQ3ZGItODdkYS1jOTAxZjU4M2QzZWEtNjM4ODA5MzQyODc2MTQyMzA5IiwiYWNjb3VudCJdLCJzdWIiOiJhZjI3NTk2Ni02NWU4LTRhYTgtODMwZi0xYjI1MGIzYmQ5MWUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJBZ25vc3RpY1BheXJvbGwiLCJzaWQiOiI3OGIwNDRmMy1jMDdlLTQ4OWEtYWEyMi0wZmI3Y2RlM2MzZDciLCJhY3IiOiIwIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtZGV2cGF5cm9sbGN1c3RvbWVydHdvIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwib3RnX3RlbmFudF9pZCI6IjZkMjhiNWMwLTNjYWQtNDllMS05MGE1LTVkNmQ4Y2E5M2UwMyIsIm5hbWUiOiJUZXN0IFVzZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0dXNlcm9uZSIsImdpdmVuX25hbWUiOiJUZXN0IiwiZmFtaWx5X25hbWUiOiJVc2VyIn0.Df-YxLiM7V827a8RmgXWYchmsWSCzyTmEsmjRsbW20xAtVIZcKiJYtZ1XsBIHBbTN6Q2b64KrayFT0crg3_RSFcC2OnS5bFVnQ5m_59o6MZrME8vymqVG1b9Qs2_TpumvgfrWqw5tFTP2oDR43YBKWDfzAL3Jk1ScM14hdqWBS_iqTYiXkPwIEYBRM6HjwictrhDwNJ0OPtPmWxVJ0g5KnAqTI1aNXx3qpmwmI5gWS4TlPXvdZhL22l-XQJ8wXHBcOWTPBzsyn490p4vQMDowORD0G1wGUcI2qtT4pIjmRzzgPJlOyWfB9w3tpw4IxAcG4q-XpLdnEIPYIvjKSkz5A",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "reqres_b24f2b35a9164e739f4b0d138cebb6b7",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/users/{{userId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "{{userId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
