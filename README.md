@@ -1,7 +1,7 @@
 # Postman API Automation – User Flow
 
 ## Overview
-This project demonstrates an automated API workflow using Postman.
+This project demonstrates a simple automated API workflow using Postman.
 
 ### Key Concepts Covered
 - Environment variables
@@ -27,3 +27,4 @@ Login → Create User → Update User → Delete User
 
 ## API Used
 https://reqres.in
+
